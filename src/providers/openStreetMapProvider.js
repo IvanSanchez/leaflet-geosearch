@@ -41,7 +41,7 @@ export default class Provider extends BaseProvider {
     }));
   }
 
-  async search({ query, data }) {
+  search({ query, data }) {
     // eslint-disable-next-line no-bitwise
     const protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
 
@@ -49,9 +49,7 @@ export default class Provider extends BaseProvider {
       ? this.endpointReverse({ data, protocol })
       : this.endpoint({ query, protocol });
 
-    const request = await fetch(url);
-    const json = await request.json();
-    return this.parse({ data: data ? [json] : json });
+    return fetch(url).then((r)=>{r.json()}).then((json)=>this.parse({ data: data ? [json] : json }));
   }
 
   translateOsmType(type) {

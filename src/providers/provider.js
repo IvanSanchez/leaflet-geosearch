@@ -1,4 +1,4 @@
-export default class Provider {
+export default class BaseProvider {
   constructor(options = {}) {
     this.options = options;
   }
@@ -9,13 +9,12 @@ export default class Provider {
     ).join('&');
   }
 
-  async search({ query }) {
+  search({ query }) {
     // eslint-disable-next-line no-bitwise
     const protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
     const url = this.endpoint({ query, protocol });
 
-    const request = await fetch(url);
-    const json = await request.json();
-    return this.parse({ data: json });
+    return fetch(url).then((r)=>{r.json()}).then((json)=>this.parse({data:json}));
+
   }
 }

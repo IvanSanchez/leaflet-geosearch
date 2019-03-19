@@ -31,14 +31,13 @@ export default class Provider extends BaseProvider {
     }));
   }
 
-  async search({ query }) {
+  search({ query }) {
     // eslint-disable-next-line no-bitwise
     const protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
 
     const jsonp = `BING_JSONP_CB_${Date.now()}`;
     const url = this.endpoint({ query, protocol, jsonp });
 
-    const json = await createScriptElement(url, jsonp);
-    return this.parse({ data: json });
+    createScriptElement(url, jsonp).then(json=>this.parse({data: json}));
   }
 }

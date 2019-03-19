@@ -28,7 +28,7 @@ export default class SearchElement {
     removeClassName(this.elements.form, 'active');
   }
 
-  async onSubmit(event) {
+  onSubmit(event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -36,8 +36,11 @@ export default class SearchElement {
     removeClassName(container, 'error');
     addClassName(container, 'pending');
 
-    await this.handleSubmit({ query: input.value });
+    this.handleSubmit({ query: input.value }).then(()=>{
     removeClassName(container, 'pending');
+
+    }
+    );
   }
 
   onInput() {

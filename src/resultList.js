@@ -10,8 +10,9 @@ export default class ResultList {
     const container = createElement('div', cx('results', classNames.container));
     const resultItem = createElement('div', cx(classNames.item));
 
-    container.addEventListener('click', this.onClick, true);
+    container.addEventListener('click', this.onClick.bind(this), true);
     this.elements = { container, resultItem };
+    this.results = {};
   }
 
   render(results = []) {
@@ -59,15 +60,15 @@ export default class ResultList {
     removeClassName(container, 'active');
   }
 
-  onClick = ({ target } = {}) => {
+  onClick(ev) {
     const { handleClick } = this.props;
     const { container } = this.elements;
 
-    if (target.parentNode !== container || !target.hasAttribute('data-key')) {
+    if (ev.target.parentNode !== container || !ev.target.hasAttribute('data-key')) {
       return;
     }
 
-    const idx = target.getAttribute('data-key');
+    const idx = ev.target.getAttribute('data-key');
     const result = this.results[idx];
     handleClick({ result });
   };

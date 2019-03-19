@@ -5,7 +5,7 @@ import ResultList from './resultList';
 import { createElement, addClassName, removeClassName } from './domUtils';
 import { ENTER_KEY, SPECIAL_KEYS, ARROW_UP_KEY, ARROW_DOWN_KEY, ESCAPE_KEY } from './constants';
 
-const defaultOptions = () => ({
+const defaultOptions = {
   position: 'topleft',
   style: 'button',
   showMarker: true,
@@ -34,7 +34,7 @@ const defaultOptions = () => ({
   autoCompleteDelay: 250,
   autoClose: false,
   keepResult: false,
-});
+};
 
 const wasHandlerEnabled = {};
 const mapHandlers = [
@@ -52,7 +52,7 @@ const Control = {
     this.handlersDisabled = false;
 
     this.options = {
-      ...defaultOptions(),
+      ...defaultOptions,
       ...options,
     };
 
@@ -226,7 +226,7 @@ const Control = {
     }
   },
 
-  async autoSearch(event) {
+  autoSearch(event) {
     if (SPECIAL_KEYS.includes(event.keyCode)) {
       return;
     }
@@ -235,22 +235,24 @@ const Control = {
     const { provider } = this.options;
 
     if (query.length) {
-      const results = await provider.search({ query });
-      this.resultList.render(results);
+      provider.search({ query }).then((results)=>{
+        this.resultList.render(results);
+      });
     }
     else {
       this.resultList.clear();
     }
   },
 
-  async onSubmit(query) {
+  onSubmit(query) {
     const { provider } = this.options;
 
-    const results = await provider.search(query);
+    const results = provider.search(query).then((results)=>{
+      if (results && results.length > 0) {
+        this.showResult(results[0], query);
+      }
+    });
 
-    if (results && results.length > 0) {
-      this.showResult(results[0], query);
-    }
   },
 
   showResult(result, { query }) {
